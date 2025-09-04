@@ -30,18 +30,46 @@ public class Conf {
     public static class FieldConfig extends Structure {
         public int width;
         public int height;
+
+        public Vec2 center() {
+            return new Vec2(this.width * 0.5f, this.height * 0.5f);
+        }
+
+        public Vec2 bottomRight() {
+            return new Vec2(this.width, this.height);
+        }
+
+        public Vec2 goal_a() {
+            return new Vec2(0, this.height * 0.5f);
+        }
+
+        public Vec2 goal_b() {
+            return new Vec2(this.width, this.height * 0.5f);
+        }
     }
 
-    @Structure.FieldOrder({"height", "thickness", "penalty_radius"})
+    @Structure.FieldOrder({"normal_height", "thickness", "penalty_box_width", "penalty_box_height", "penalty_box_radius" })
     public static class GoalConfig extends Structure {
-        public int height;
+        public int normal_height;
         public int thickness;
-        public int penalty_radius;
+        public int penalty_box_width;
+        public int penalty_box_height;
+        public int penalty_box_radius;
+
+
+        public int currentHeight(GameConfig conf, int tick) {
+            if (tick < conf.max_ticks) {
+                return this.normal_height;
+            } else {
+                return this.penalty_box_height;
+            }
+        }
     }
 
-    @Structure.FieldOrder({"max_ticks", "spawn_ball_dist", "ball", "player", "field", "goal"})
+    @Structure.FieldOrder({"max_ticks", "endgame_ticks", "spawn_ball_dist", "ball", "player", "field", "goal"})
     public static class GameConfig extends Structure {
         public int max_ticks;
+        public int endgame_ticks;
         public float spawn_ball_dist;
         public BallConfig ball;
         public PlayerConfig player;
