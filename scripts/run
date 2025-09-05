@@ -1,0 +1,4 @@
+#!/bin/sh
+set -e
+cd "$(dirname "$(realpath $0)")"/..
+java -cp "bot.jar:deps/jna.jar" com.bot.Main "$@"
