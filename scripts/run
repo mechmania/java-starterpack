@@ -1,4 +1,4 @@
 #!/bin/sh
 set -e
 cd "$(dirname "$(realpath $0)")"/..
-java -cp "bot.jar:deps/jna.jar" com.bot.Main "$@"
+java --enable-native-access=ALL-UNNAMED -cp "bot.jar:deps/jna.jar" com.bot.Main "$@"
