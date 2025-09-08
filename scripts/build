@@ -1,0 +1,6 @@
+#!/bin/sh
+set -e
+cd "$(dirname "$(realpath $0)")"/..
+if [ ! -d build ]; then mkdir build; fi
+javac -cp "deps/jna.jar" -d build src/com/bot/*.java src/com/bot/**/*.java
+jar cfm bot.jar manifest.txt -C build .
