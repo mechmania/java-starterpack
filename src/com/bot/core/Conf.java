@@ -61,7 +61,7 @@ public class Conf {
             if (tick < conf.max_ticks) {
                 return this.normal_height;
             } else {
-                return this.penalty_box_height;
+                return conf.field.height;
             }
         }
     }

@@ -1,3 +1,4 @@
 build/
 bot.jar
 .mm-token.txt
+logs*
