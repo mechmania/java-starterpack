@@ -50,7 +50,7 @@ public class EngineChannel implements Closeable {
         }
     }
 
-    public void handleHandshake() throws InterruptedException {
+    public int handleHandshake() throws InterruptedException {
         poll(EngineStatus.Ready);
 
         byte[] data = new byte[shm.size()];
@@ -64,7 +64,7 @@ public class EngineChannel implements Closeable {
         shm.protocol.data.setType(HandshakeMsg.class);
         shm.protocol.data.read();
 
-        StrategyMain.realTeam = shm.protocol.data.handshake_msg.team;
+        int team = shm.protocol.data.handshake_msg.team;
         GameConfig shmConfig = shm.protocol.data.handshake_msg.config;
         StrategyMain.config = new GameConfig();
         StrategyMain.config.copyFrom(shmConfig);
@@ -80,6 +80,9 @@ public class EngineChannel implements Closeable {
         p.read(0, data, 0, data.length);
         buffer.position(0);
         buffer.put(data);
+
+
+        return team;
     }
 
     public void handleMsg(Strategy strategy) throws InterruptedException {

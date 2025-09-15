@@ -14,26 +14,26 @@ import java.util.Optional;
 
 public class StrategyMain {
 
-    // These will be initialized 
-    public static int realTeam; 
+    // Config will be initialized 
     public static GameConfig config;
 
-    public static Strategy getStrategy() {
-       /**
-        * Change which strategy you use here:
-        * return new DoNothing();
-        *
-        * To test two different strategies, use the realTeam variable:
-        *
-        * if (realTeam == 0) {
-        *   return new MyStrategy();
-        * } else {
-        *   return new DoNothing();
-        * }
-        *
-        */
-
-        return new MyStrategy();
+    /**
+     * This function tells the engine what strategy you want your bot to use
+     */
+    public static Strategy getStrategy(int team) {
+        // realTeam == 0 means I am on the left
+        // realTeam == 1 means I am on the right
+        
+        if (team == 0) {
+            System.out.println("Hello! I am team A (on the left)");
+            return new MyStrategy();
+        } else {
+            System.out.println("Hello! I am team B (on the right)");
+            return new DoNothing();
+        }
+        
+        // NOTE when actually submitting your bot, you probably want to have the SAME strategy for both
+        // sides.
     }
 
     /**
@@ -41,47 +41,56 @@ public class StrategyMain {
      */
     private static class MyStrategy implements Strategy {
 
+        /**
+         * The engine will call this function every time the field is reset:
+         * either after a goal, if the ball has not moved for too long, or right before endgame
+         */
         @Override
         public List<Vec2> onReset(Score score) {
-            System.out.printf("Resetting strategy... Score: %d-%d%n", score.self, score.other);
-            List<Vec2> initialPositions = new ArrayList<>();
-            for (int i = 0; i < Conf.NUM_PLAYERS; i++) {
-                initialPositions.add(new Vec2(0, 0));
-            }
-            return initialPositions;
+            Vec2 field = config.field.bottomRight();
+            
+            return Arrays.asList(
+                new Vec2(field.x * 0.1f, field.y * 0.5f),
+                new Vec2(field.x * 0.4f, field.y * 0.4f),
+                new Vec2(field.x * 0.4f, field.y * 0.5f),
+                new Vec2(field.x * 0.4f, field.y * 0.6f)
+            );
         }
 
+        /**
+         * Very simple strategy to chase the ball and shoot on goal
+         */
         @Override
         public List<PlayerAction> onTick(GameState gameState) {
-            List<PlayerAction> actions = new ArrayList<>();
+            // NOTE Do not worry about what side your bot is on! 
+            // The engine mirrors the world for you if you are on the right, 
+            // so to you, you always appear on the left.
             
-            // Example Logic: Every player tries to move towards the ball.
-            Vec2 ballPos = gameState.ball.pos;
-
-            BallPossession possession = gameState.getBallPossession();
-            if (possession instanceof BallPossession.Possessed p) {
-                 System.out.printf("Player %d has the ball!%n", p.owner());
-            }
-
+            List<PlayerAction> actions = new ArrayList<>();
+            Vec2 goalOther = config.field.goalOther();
+            
             for (PlayerState me : gameState.getSelfTeam()) {
-                Vec2 moveDirection = ballPos.subtract(me.pos).normalize();
-                actions.add(new PlayerAction(moveDirection, null));
+                Vec2 moveDirection = gameState.ball.pos.subtract(me.pos);
+                actions.add(new PlayerAction(moveDirection, goalOther.subtract(me.pos));
             }
             return actions;
         }
     }
 
     /**
-     * You can have multiple strategies for testing, just swap them out in getStrategy()
+     * This strategy will do nothing :(
      */
     private static class DoNothing implements Strategy {
         @Override
         public List<Vec2> onReset(Score score) {
-            List<Vec2> initialPositions = new ArrayList<>();
-            for (int i = 0; i < Conf.NUM_PLAYERS; i++) {
-                initialPositions.add(new Vec2(0, 0));
-            }
-            return initialPositions;
+            Vec2 field = config.field.bottomRight();
+            
+            return Arrays.asList(
+                new Vec2(field.x * 0.1f, field.y * 0.5f),
+                new Vec2(field.x * 0.4f, field.y * 0.4f),
+                new Vec2(field.x * 0.4f, field.y * 0.5f),
+                new Vec2(field.x * 0.4f, field.y * 0.6f)
+            );
         }
 
         @Override
