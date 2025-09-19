@@ -39,11 +39,11 @@ public class Conf {
             return new Vec2(this.width, this.height);
         }
 
-        public Vec2 goal_a() {
+        public Vec2 goalSelf() {
             return new Vec2(0, this.height * 0.5f);
         }
 
-        public Vec2 goal_b() {
+        public Vec2 goalOther() {
             return new Vec2(this.width, this.height * 0.5f);
         }
     }
